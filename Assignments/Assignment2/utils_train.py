@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm.notebook import tqdm
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -10,7 +11,7 @@ def train(model, train_loader, optimizer, loss_fn, print_every=100):
     model.train()
     losses = []
     n_correct = 0
-    for iteration, (images, labels) in enumerate(train_loader):
+    for iteration, (images, labels) in enumerate(tqdm(train_loader)):
         images = images.to(device)
         labels = labels.to(device)
         output = model(images)
@@ -51,7 +52,7 @@ def fit(train_dataloader, val_dataloader, model, optimizer, loss_fn, n_epochs, s
     train_losses, train_accuracies = [], []
     val_losses, val_accuracies = [], []
 
-    for epoch in range(n_epochs):
+    for epoch in tqdm(range(n_epochs)):
         train_loss, train_accuracy = train(model, train_dataloader, optimizer, loss_fn)
         val_loss, val_accuracy = test(model, val_dataloader, loss_fn)
         train_losses.append(train_loss)
