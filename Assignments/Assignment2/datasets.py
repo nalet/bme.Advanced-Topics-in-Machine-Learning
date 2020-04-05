@@ -15,8 +15,8 @@ class ImageNetLimited(data.Dataset):
         self.data = data
 
     def __len__(self):
-        return self.data[ind]
+        return self.n
 
     def __getitem__(self, idx):
-        return self.n
+        return self.data[idx]
         
