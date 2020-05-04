@@ -18,8 +18,8 @@ def train(model, train_loader, optimizer, loss_fn, print_every=100):
         loss = loss_fn(output, labels)
         loss.backward()
         optimizer.step()
-#        if iteration % print_every == 0:
-#            print('Training iteration {}: loss {:.4f}'.format(iteration, loss.item()))
+#         if iteration % print_every == 0:
+#             print('Training iteration {}: loss {:.4f}'.format(iteration, loss.item()))
         losses.append(loss.item())
         n_correct += torch.sum(output.argmax(1) == labels).item()
     accuracy = 100.0 * n_correct / len(train_loader.dataset)
@@ -43,7 +43,7 @@ def test(model, test_loader, loss_fn):
 
     average_loss = test_loss / len(test_loader)
     accuracy = 100.0 * n_correct / len(test_loader.dataset)
-    print('Test average loss: {:.4f}, accuracy: {:.3f}'.format(average_loss, accuracy))
+#     print('Test average loss: {:.4f}, accuracy: {:.3f}'.format(average_loss, accuracy))
     return average_loss, accuracy
 
 
