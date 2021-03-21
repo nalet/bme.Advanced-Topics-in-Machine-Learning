@@ -6,7 +6,7 @@ import torchvision
 class MnistPairs(Dataset):
     """Dataset with Mnist pairs."""
 
-    def __init__(self, root, train, download, transform=None, order='right', return_original_labels=False):
+    def __init__(self, root, train, download, transform=None, order='right', return_original_labels=False, concatenated=False):
         """
         Args:
             root (string): Directory to store the downloaded MNIST dataset.
@@ -20,6 +20,7 @@ class MnistPairs(Dataset):
         
         assert order in ['right', 'left'], "Got unexpected order argument. Expected one of ['right', 'left']"
         self.order = order
+        self.concatenated = concatenated
         
         self.return_original_labels = return_original_labels
         
@@ -61,7 +62,23 @@ class MnistPairs(Dataset):
             first_image = second_image
             second_image = _tmp
 
+            _tmp_label = first_label
+            first_label = second_label
+            second_label = _tmp_label
+
+
         label = (first_label + second_label) % 10
+
+        if self.concatenated: 
+            concatenated_image = torch.cat((torchvision.transforms.functional.to_tensor(first_image), torchvision.transforms.functional.to_tensor(second_image)), 2)
+            concatenated_image = torchvision.transforms.functional.to_pil_image(concatenated_image)
+
+            if self.concatenated and self.return_original_labels:
+                return concatenated_image, label, first_label, second_label
+
+            if self.concatenated and self.return_original_labels==False:
+                return concatenated_image, label  
+
         
         #########################
         #     End of your code  #
