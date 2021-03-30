@@ -23,12 +23,13 @@ class MnistPairs(Dataset):
         self.concatenated = concatenated
         
         self.return_original_labels = return_original_labels
+        self.transform = transform
         
         self.mnist_dataset = torchvision.datasets.MNIST(
             root=root,
             train=train,
             download=download,
-            transform=transform)
+            transform=self.transform)
 
     def __len__(self):
         # MnistPairs should be half the size of the MNIST dataset
@@ -69,14 +70,17 @@ class MnistPairs(Dataset):
 
         label = (first_label + second_label) % 10
 
-        if self.concatenated: 
-            concatenated_image = torch.cat((torchvision.transforms.functional.to_tensor(first_image), torchvision.transforms.functional.to_tensor(second_image)), 2)
-            concatenated_image = torchvision.transforms.functional.to_pil_image(concatenated_image)
+        if self.concatenated:
+            if self.transform is None:
+                concatenated_image = torch.cat((torchvision.transforms.functional.to_tensor(first_image), torchvision.transforms.functional.to_tensor(second_image)), 2)
+                concatenated_image = torchvision.transforms.functional.to_pil_image(concatenated_image)
+            else:
+                concatenated_image = torch.cat((first_image, second_image), 2)
 
-            if self.concatenated and self.return_original_labels:
+            if self.return_original_labels:
                 return concatenated_image, label, first_label, second_label
 
-            if self.concatenated and self.return_original_labels==False:
+            if self.return_original_labels == False:
                 return concatenated_image, label  
 
         
